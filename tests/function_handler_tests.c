@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
-	char* t1 = "A | B|C |d | (a+b)";
+	char* t1 = "A | b|C |d | (a+b)";
 	rule* r = create_rule('X', t1);
 	printf("%c -> ", r->name);
 
