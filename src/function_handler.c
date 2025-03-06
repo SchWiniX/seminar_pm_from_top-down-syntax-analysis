@@ -121,10 +121,10 @@ int apply_rule(char* input_string, char name_char, rule* grammer[]) {
 	}
 
 
-	int pot_index = uppercase_char_to_index(curr_rule->remainder[curr_rule->remainder_count]);
+	int pot_index = uppercase_char_to_index(curr_rule->remainder[curr_rule->remainder_count - 1]);
 
 		if (0 <= pot_index && pot_index <= 25) {
-			if(!apply_rule(input_string, curr_rule->remainder[curr_rule->remainder_count], grammer)) {
+			if(!apply_rule(input_string, curr_rule->remainder[curr_rule->remainder_count - 1], grammer)) {
 				printf("%c returned False (h = %d)\n", name_char, h);
 				h = h_old;
 				return 0;
@@ -132,13 +132,13 @@ int apply_rule(char* input_string, char name_char, rule* grammer[]) {
 			return 1;
 		}
 
-		if(input_string[h] != curr_rule->remainder[curr_rule->remainder_count]) {
-		printf("remainder: %c: %d NOT matched with input_string[h]: %c\n", curr_rule->remainder[curr_rule->remainder_count], pot_index, input_string[h]);
+		if(input_string[h] != curr_rule->remainder[curr_rule->remainder_count - 1]) {
+		printf("remainder: %c: %d NOT matched with input_string[h]: %c\n", curr_rule->remainder[curr_rule->remainder_count - 1], pot_index, input_string[h]);
 			printf("%c returned False (h = %d)\n", name_char, h);
 			h = h_old;
 			return 0;
 		}
-		printf("remainder: %c: %d matched with input_string[h]: %c\n", curr_rule->remainder[curr_rule->remainder_count], pot_index, input_string[h]);
+		printf("remainder: %c: %d matched with input_string[h]: %c\n", curr_rule->remainder[curr_rule->remainder_count - 1], pot_index, input_string[h]);
 		h++;
 		return 1;
 }

@@ -34,6 +34,8 @@ int main(int argc, char *argv[]) {
 		
 	}
 
-	printf("%d\n", apply_rule("(a=(b+a))", 'B', r));
+	char* str = "(((a+a)+a)=b)";
+	printf("calling apply function on %s\n", str);
+	printf("%d\n", apply_rule(str, 'B', r));
 	return 0;
 }
