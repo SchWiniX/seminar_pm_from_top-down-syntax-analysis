@@ -27,6 +27,9 @@ rule* create_rule(char name, char* rule_input) {
 	new_rule->name = name;
 	new_rule->singletons = (char*) malloc(512);
 	new_rule->remainder = (char*) malloc(512);
+	new_rule->remainder[0] = '\0';
+	new_rule->remainder_count = 0;
+	new_rule->singleton_count = 0;
 
 
 	int32_t indx = -1;
@@ -42,7 +45,6 @@ rule* create_rule(char name, char* rule_input) {
 	}
 	if (indx == -1) {
 		process_remainder(new_rule, rule_input, 0);
-		new_rule->singleton_count = 0;
 		return new_rule;
 	}
 
@@ -56,12 +58,13 @@ rule* create_rule(char name, char* rule_input) {
 			new_rule->remainder[1] = curr;
 			process_remainder(new_rule, rule_input, 2);
 			break;
-		} else if (curr == '|' && last == '|') new_rule->singletons[indx++] = '\0';
-		else if (curr != '|' && last == '|') new_rule->singletons[indx++] = curr;
+		} else if (curr != '|' && last == '|') new_rule->singletons[indx++] = curr;
 
 		last = curr;
 	}
-
+	if (new_rule->remainder[0] == '\0')	{
+		new_rule->singletons[indx++] = *(rule_input - 2);
+	}
 	new_rule->singleton_count = indx - 1;
 	return new_rule;
 }
@@ -85,6 +88,12 @@ int apply_rule(char* input_string, char name_char, rule* grammer[]) {
 			}
 			h = h_old;
 			continue;
+		}
+
+		if(curr_rule->singletons[i] == '~') {
+			printf("singletons: %c: %d matched the empty string\n", curr_rule->singletons[i], pot_index);
+			printf("%c returned True (h = %d)\n", name_char, h);
+			return 1;
 		}
 
 		if(input_string[h] == curr_rule->singletons[i]) {
@@ -116,6 +125,7 @@ int apply_rule(char* input_string, char name_char, rule* grammer[]) {
 			h = h_old;
 			return 0;
 		}
+
 		printf("remainder: %c: %d matched with input_string[h]: %c\n", curr_rule->remainder[i], pot_index, input_string[h]);
 		h++;
 	}
