@@ -6,6 +6,24 @@
 int verbose = 0;
 int skip = 0;
 
+int wait() {
+	char inbuf[32];
+	while (scanf("%s", inbuf) == 1) {
+		if (inbuf[0] == 'S') {
+			skip = 1;
+			break;
+		}
+		if (inbuf[0] == 'v') {
+			verbose = 1;
+			break;
+		}
+		if (inbuf[0] == 'n') {
+			break;
+		}
+	}
+	return 0;
+}
+
 int uppercase_char_to_index(char C) {
 	return (int) C - 65;
 }
@@ -105,6 +123,7 @@ int apply_rule(char* input_string, char name_char, rule* grammer[], int depth, i
 
 	uint32_t rule_index = uppercase_char_to_index(name_char);
 	printf("%sCall %c (h = %d)\n", tabs, name_char, h);
+	if (!skip) wait();
 	rule* curr_rule = grammer[rule_index];
 
 

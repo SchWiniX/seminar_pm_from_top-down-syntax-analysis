@@ -80,13 +80,21 @@ int remove_rule(char rule_name, rule* grammer[]) {
 }
 
 int run(char start_rule, char* input_str, rule* grammer[]) {
+	int skip_temp = skip;
+	int verbose_temp = verbose;
 	int ret = apply_rule(input_str, start_rule, grammer, 0, 0);
+	apply_rule(NULL, '\0', NULL, 0, 1);
+	skip = 1;
+	printf("Parsing returned: %d\n\nThe full callstack is:\n", ret);
+	apply_rule(input_str, start_rule, grammer, 0, 0);
+	skip = skip_temp;
+	verbose = verbose_temp;
 	apply_rule(NULL, '\0', NULL, 0, 1);
 	return ret;
 }
 
 int main(int argc, char *argv[]) {
-	char* inbuf = (char*) malloc(512);
+	char* inbuf = (char*) calloc(512, 1);
 	char* commandbuf = (char*) malloc(32);
 	rule** grammer = (rule**) calloc(26, sizeof(rule*));
 
@@ -108,7 +116,7 @@ int main(int argc, char *argv[]) {
 			remove_rule(*inbuf, grammer);
 			continue;
 		} else if (commandbuf[1] == 'a') {
-			if (scanf("%s %*s %[^\n]s", inbuf, inbuf+1) != 2) {
+			if (scanf("%s %*s %[^\n]s\n", inbuf, inbuf+1) != 2) {
 				printf("reading rule failed\n");
 				continue;
 			}
