@@ -3,8 +3,28 @@
 #include <stdlib.h>
 #include "function_handler.h"
 
+int verbose = 0;
+int skip = 0;
+
 int uppercase_char_to_index(char C) {
 	return (int) C - 65;
+}
+
+int tab_gen(char* buff, int reccursion_depth) {
+	for (int i = 0; i < reccursion_depth * 2; i += 2) {
+		buff[i] = '|';
+		buff[i + 1] = ' ';
+	}
+	buff[reccursion_depth * 2] = '\0';
+	return 0;
+}
+
+int free_rule(rule* rule_to_free) {
+	if(!rule_to_free) return -1;
+	free(rule_to_free->singletons);
+	free(rule_to_free->remainder);
+	free(rule_to_free);
+	return 0;
 }
 
 void process_remainder(rule* r, char* rule_remainder, uint32_t start_from) {
@@ -14,7 +34,9 @@ void process_remainder(rule* r, char* rule_remainder, uint32_t start_from) {
 		if (curr == ' ') continue;
 		r->remainder[indx++] = curr;
 	}
-	r->remainder_count = indx;
+	r->remainder_count = indx++;
+	r->remainder[indx] = '\0';
+
 }
 
 rule* create_rule(char name, char* rule_input) {
@@ -69,12 +91,20 @@ rule* create_rule(char name, char* rule_input) {
 	return new_rule;
 }
 
-int apply_rule(char* input_string, char name_char, rule* grammer[]) {
-	uint32_t rule_index = uppercase_char_to_index(name_char);
+int apply_rule(char* input_string, char name_char, rule* grammer[], int depth, int reset) {
 	static int h = 0;
 	int h_old = h;
 
-	printf("Call %c (h = %d)\n", name_char, h);
+	if (reset) {
+		h = 0;
+		return 0;
+	}
+
+	char tabs[64];
+	tab_gen(tabs, depth);
+
+	uint32_t rule_index = uppercase_char_to_index(name_char);
+	printf("%sCall %c (h = %d)\n", tabs, name_char, h);
 	rule* curr_rule = grammer[rule_index];
 
 
@@ -82,8 +112,8 @@ int apply_rule(char* input_string, char name_char, rule* grammer[]) {
 		int pot_index = uppercase_char_to_index(curr_rule->singletons[i]);
 
 		if (0 <= pot_index && pot_index <= 25) {
-			if(apply_rule(input_string, curr_rule->singletons[i], grammer)) {
-				printf("%c returned True (h = %d)\n", name_char, h);
+			if(apply_rule(input_string, curr_rule->singletons[i], grammer, depth + 1, 0)) {
+				printf("%s%c returned True (h = %d)\n", tabs, name_char, h);
 				return 1;
 			}
 			h = h_old;
@@ -91,18 +121,18 @@ int apply_rule(char* input_string, char name_char, rule* grammer[]) {
 		}
 
 		if(curr_rule->singletons[i] == '~') {
-			printf("singletons: %c: %d matched the empty string\n", curr_rule->singletons[i], pot_index);
-			printf("%c returned True (h = %d)\n", name_char, h);
+			if (verbose) printf("| %ssingletons: %c: %d matched the empty string\n", tabs, curr_rule->singletons[i], pot_index);
+			printf("%s%c returned True (h = %d)\n", tabs, name_char, h);
 			return 1;
 		}
 
 		if(input_string[h] == curr_rule->singletons[i]) {
-			printf("singletons: %c: %d matched with input_string[h]: %c\n", curr_rule->singletons[i], pot_index, input_string[h]);
-			printf("%c returned True (h = %d)\n", name_char, h);
+			if (verbose) printf("| %ssingletons: %c: %d matched with input_string[h]: %c\n", tabs, curr_rule->singletons[i], pot_index, input_string[h]);
+			printf("%s%c returned True (h = %d)\n", tabs, name_char, h);
 			h++;
 			return 1;
 		}
-		printf("singletons: %c: %d NOT matched with input_string[h]: %c\n", curr_rule->singletons[i], pot_index, input_string[h]);
+		if (verbose) printf("| %ssingletons: %c: %d NOT matched with input_string[h]: %c\n", tabs, curr_rule->singletons[i], pot_index, input_string[h]);
 		h = h_old;
 	}
 
@@ -111,22 +141,22 @@ int apply_rule(char* input_string, char name_char, rule* grammer[]) {
 		int pot_index = uppercase_char_to_index(curr_rule->remainder[i]);
 
 		if (0 <= pot_index && pot_index <= 25) {
-			if(!apply_rule(input_string, curr_rule->remainder[i], grammer)) {
+			if(!apply_rule(input_string, curr_rule->remainder[i], grammer, depth + 1, 0)) {
 				h = h_old;
-				printf("%c returned False (h = %d)\n", name_char, h);
+				printf("%s%c returned False (h = %d)\n", tabs, name_char, h);
 				return 0;
 			}
 			continue;
 		}
 
 		if(input_string[h] != curr_rule->remainder[i]) {
-			printf("remainder: %c: %d NOT matched with input_string[h]: %c\n", curr_rule->remainder[i], pot_index, input_string[h]);
-			printf("%c returned False (h = %d)\n", name_char, h);
+			if (verbose) printf("| %sremainder: %c: %d NOT matched with input_string[h]: %c\n", tabs, curr_rule->remainder[i], pot_index, input_string[h]);
+			printf("%s%c returned False (h = %d)\n", tabs, name_char, h);
 			h = h_old;
 			return 0;
 		}
 
-		printf("remainder: %c: %d matched with input_string[h]: %c\n", curr_rule->remainder[i], pot_index, input_string[h]);
+		if (verbose) printf("| %sremainder: %c: %d matched with input_string[h]: %c\n", tabs, curr_rule->remainder[i], pot_index, input_string[h]);
 		h++;
 	}
 
@@ -134,21 +164,23 @@ int apply_rule(char* input_string, char name_char, rule* grammer[]) {
 	int pot_index = uppercase_char_to_index(curr_rule->remainder[curr_rule->remainder_count - 1]);
 
 		if (0 <= pot_index && pot_index <= 25) {
-			if(!apply_rule(input_string, curr_rule->remainder[curr_rule->remainder_count - 1], grammer)) {
-				printf("%c returned False (h = %d)\n", name_char, h);
+			if(!apply_rule(input_string, curr_rule->remainder[curr_rule->remainder_count - 1], grammer, depth + 1, 0)) {
+				printf("%s%c returned False (h = %d)\n", tabs, name_char, h);
 				h = h_old;
 				return 0;
 			}
+			printf("%s%c returned True (h = %d)\n", tabs, name_char, h);
 			return 1;
 		}
 
 		if(input_string[h] != curr_rule->remainder[curr_rule->remainder_count - 1]) {
-		printf("remainder: %c: %d NOT matched with input_string[h]: %c\n", curr_rule->remainder[curr_rule->remainder_count - 1], pot_index, input_string[h]);
-			printf("%c returned False (h = %d)\n", name_char, h);
+		if (verbose) printf("| %sremainder: %c: %d NOT matched with input_string[h]: %c\n", tabs, curr_rule->remainder[curr_rule->remainder_count - 1], pot_index, input_string[h]);
+			printf("%s%c returned False (h = %d)\n", tabs, name_char, h);
 			h = h_old;
 			return 0;
 		}
-		printf("remainder: %c: %d matched with input_string[h]: %c\n", curr_rule->remainder[curr_rule->remainder_count - 1], pot_index, input_string[h]);
+		if (verbose) printf("| %sremainder: %c: %d matched with input_string[h]: %c\n", tabs, curr_rule->remainder[curr_rule->remainder_count - 1], pot_index, input_string[h]);
+		printf("%s%c returned True (h = %d)\n", tabs, name_char, h);
 		h++;
 		return 1;
 }

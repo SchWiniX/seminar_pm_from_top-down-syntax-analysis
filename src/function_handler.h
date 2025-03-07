@@ -11,9 +11,11 @@ typedef struct {
 	int32_t remainder_count;
 } rule;
 
+
 int uppercase_char_to_index(char C);
 
+int free_rule(rule* rule_to_free);
 //expect rule input of format X -> Y_1 | Y_2 | ... | Y_n | Z_1, Z_2 ... Z_m where name = X and rule_unput = Y_1...
 rule* create_rule(char name, char* rule_input);
 
-int apply_rule(char* input_string, char name_char, rule* grammer[]);
+int apply_rule(char* input_string, char name_char, rule* grammer[], int depth, int reset);

@@ -1,5 +1,5 @@
 build:
-	gcc -o builds/dpm src/main.c
+	gcc -o builds/dpm src/main.c src/function_handler.c
 
 clean:
 	rm builds/*

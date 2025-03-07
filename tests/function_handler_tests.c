@@ -9,8 +9,8 @@ int main(int argc, char *argv[]) {
 	//char* M = "(E*E)";
 	//char* D = "(E/E)";
 	
-	char* B = "b | ~";
-	char* R = "aB";
+	char* B = "R";
+	char* R = "a | ab";
 	rule* r[26];
 	for(int i = 0; i < 26; i++) r[i] = NULL;
 	printf(
@@ -40,11 +40,10 @@ int main(int argc, char *argv[]) {
 		}
 		if (r[j]->singleton_count != 0 && r[j]->remainder_count != 0) printf("| %s\n", r[j]->remainder);
 		else printf("%s\n", r[j]->remainder);
-		
 	}
 
 	char* str = "a";
 	printf("calling apply function on %s with starting rule %c\n", str, 'R');
-	printf("which returned: %d\n", apply_rule(str, 'R', r));
+	printf("which returned: %d\n", apply_rule(str, 'R', r, 0, 0));
 	return 0;
 }
