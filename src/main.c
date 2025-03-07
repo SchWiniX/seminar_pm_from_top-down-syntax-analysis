@@ -8,6 +8,7 @@ extern int verbose;
 extern int skip;
 
 int setup_initial_grammer(rule* grammer[]) {
+	char* S = "B#";
 	char* B = "R | (B)";
 	char* R = "E=E";
 	char* E = "a | b | c | (E+E)";
@@ -17,6 +18,7 @@ int setup_initial_grammer(rule* grammer[]) {
 		grammer[i] = NULL;
 	}
 	
+	grammer[uppercase_char_to_index('S')] = create_rule('S', S);
 	grammer[uppercase_char_to_index('B')] = create_rule('B', B);
 	grammer[uppercase_char_to_index('R')] = create_rule('R', R);
 	grammer[uppercase_char_to_index('E')] = create_rule('E', E);
@@ -35,7 +37,7 @@ int clean_string(char* str, int offset) {
 		cpy[indx++] = curr;
 	}
 	cpy[indx] = '\0';
-	strcpy(str_off, cpy);
+	strcpy(str, cpy);
 	return 0;
 }
 
@@ -99,7 +101,7 @@ int main(int argc, char *argv[]) {
 	rule** grammer = (rule**) calloc(26, sizeof(rule*));
 
 	setup_initial_grammer(grammer);
-	char start_char = 'B';
+	char start_char = 'S';
 
 	while (1) {
 		printf("DPM> ");
@@ -127,7 +129,10 @@ int main(int argc, char *argv[]) {
 			scanf("%s", inbuf);
 			start_char = *inbuf;
 		} else if (commandbuf[1] == 'r') {
-			scanf("%s", inbuf);
+			scanf("%[^\n]s\n", inbuf);
+			inbuf[strlen(inbuf)] = '#';
+			inbuf[strlen(inbuf) + 1] = '\0';
+			clean_string(inbuf, 0);
 			run(start_char, inbuf, grammer);
 			continue;
 		} else if (commandbuf[1] == 'R') {
