@@ -34,7 +34,7 @@ void process_remainder(rule* r, char* rule_remainder, uint32_t start_from) {
 		if (curr == ' ') continue;
 		r->remainder[indx++] = curr;
 	}
-	r->remainder_count = indx++;
+	r->remainder_count = indx;
 	r->remainder[indx] = '\0';
 
 }

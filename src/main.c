@@ -34,6 +34,7 @@ int clean_string(char* str, int offset) {
 		if (curr == ' ') continue;
 		cpy[indx++] = curr;
 	}
+	cpy[indx] = '\0';
 	strcpy(str_off, cpy);
 	return 0;
 }
@@ -103,7 +104,7 @@ int main(int argc, char *argv[]) {
 			remove_all_rules(grammer);
 			continue;
 		} else if (commandbuf[1] == 'c') {
-			scanf("%c", inbuf);
+			scanf("%s", inbuf);
 			remove_rule(*inbuf, grammer);
 			continue;
 		} else if (commandbuf[1] == 'a') {
@@ -111,10 +112,11 @@ int main(int argc, char *argv[]) {
 				printf("reading rule failed\n");
 				continue;
 			}
+			clean_string(inbuf + 1, 0);
 			add_rule(*inbuf, inbuf+1, grammer);
 			continue;
 		} else if (commandbuf[1] == 's') {
-			scanf("%c", inbuf);
+			scanf("%s", inbuf);
 			start_char = *inbuf;
 		} else if (commandbuf[1] == 'r') {
 			scanf("%s", inbuf);
