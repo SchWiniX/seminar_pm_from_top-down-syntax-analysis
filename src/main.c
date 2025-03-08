@@ -50,7 +50,8 @@ int add_rule(char rule_name, char* rule_body, rule* grammer[]) {
 	return 0;
 }
 
-int list_rules(rule* grammer[]) {
+int list_rules(char starting_rule, rule* grammer[]) {
+	printf("Starting Rule: %c\n", starting_rule);
 	for(int j = 0; j < 26; j++) {
 		if (grammer[j] == NULL) continue;
 		printf("%c -> ", grammer[j]->name);
@@ -136,10 +137,11 @@ int main(int argc, char *argv[]) {
 			run(start_char, inbuf, grammer);
 			continue;
 		} else if (commandbuf[1] == 'R') {
+			start_char = 'S';
 			setup_initial_grammer(grammer);
 			continue;
 		} else if (commandbuf[1] == 'l') {
-			list_rules(grammer);
+			list_rules(start_char, grammer);
 			continue;
 		} else if (commandbuf[1] == 'v') {
 			scanf("%d", &verbose);

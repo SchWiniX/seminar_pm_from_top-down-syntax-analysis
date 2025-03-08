@@ -1,3 +1,10 @@
 builds/*
+*.pdf
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
 !.gitignore
 !builds/
