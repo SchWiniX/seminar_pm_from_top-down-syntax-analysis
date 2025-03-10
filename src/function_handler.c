@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "function_handler.h"
@@ -71,6 +72,11 @@ rule* create_rule(char name, char* rule_input) {
 	new_rule->remainder_count = 0;
 	new_rule->singleton_count = 0;
 
+	if (strlen(rule_input) == 1) {
+		new_rule->singletons[0] = *(rule_input);
+		new_rule->singleton_count = 1;
+		return new_rule;
+	}
 
 	int32_t indx = -1;
 	char curr;

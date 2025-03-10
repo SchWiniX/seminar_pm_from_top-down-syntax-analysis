@@ -11,7 +11,7 @@ int setup_initial_grammer(rule* grammer[]) {
 	char* S = "B#";
 	char* B = "R | (B)";
 	char* R = "E=E";
-	char* E = "a | b | c | (E+E)";
+	char* E = "a | b | (E+E)";
 
 	for(int i = 0; i < 26; i++) {
 		free_rule(grammer[i]);
@@ -22,6 +22,33 @@ int setup_initial_grammer(rule* grammer[]) {
 	grammer[uppercase_char_to_index('B')] = create_rule('B', B);
 	grammer[uppercase_char_to_index('R')] = create_rule('R', R);
 	grammer[uppercase_char_to_index('E')] = create_rule('E', E);
+
+	return 0;
+}
+
+int setup_third_contition_grammer(rule* grammer[]) {
+	char* S = "X#";
+	char* X = "Y | Z";
+	char* Y = "WT";
+	char* W = "V|U";
+	char* T = "a";
+	char* Z = "b";
+	char* V = "c";
+	char* U = "~";
+
+	for(int i = 0; i < 26; i++) {
+		free_rule(grammer[i]);
+		grammer[i] = NULL;
+	}
+	
+	grammer[uppercase_char_to_index('S')] = create_rule('S', S);
+	grammer[uppercase_char_to_index('X')] = create_rule('X', X);
+	grammer[uppercase_char_to_index('Y')] = create_rule('Y', Y);
+	grammer[uppercase_char_to_index('W')] = create_rule('W', W);
+	grammer[uppercase_char_to_index('T')] = create_rule('T', T);
+	grammer[uppercase_char_to_index('Z')] = create_rule('Z', Z);
+	grammer[uppercase_char_to_index('V')] = create_rule('V', V);
+	grammer[uppercase_char_to_index('U')] = create_rule('U', U);
 
 	return 0;
 }
@@ -61,7 +88,7 @@ int list_rules(char starting_rule, rule* grammer[]) {
 		for(int i = 1; i < grammer[j]->singleton_count; i++) {
 			printf("| %c ", grammer[j]->singletons[i]);
 		}
-		if (grammer[j]->singleton_count != 0 && grammer[j]->remainder_count != 0) printf("| %s\n", grammer[j]->remainder);
+		if (grammer[j]->singleton_count != 0 && grammer[j]->remainder_count != 0) printf("|| %s\n", grammer[j]->remainder);
 		else printf("%s\n", grammer[j]->remainder);
 	}
 	return 0;
@@ -137,8 +164,13 @@ int main(int argc, char *argv[]) {
 			run(start_char, inbuf, grammer);
 			continue;
 		} else if (commandbuf[1] == 'R') {
+			int i;
+			scanf("%d", &i);
 			start_char = 'S';
-			setup_initial_grammer(grammer);
+			switch (i) {
+				case 0: setup_initial_grammer(grammer);
+				case 1: setup_third_contition_grammer(grammer);
+			}
 			continue;
 		} else if (commandbuf[1] == 'l') {
 			list_rules(start_char, grammer);
