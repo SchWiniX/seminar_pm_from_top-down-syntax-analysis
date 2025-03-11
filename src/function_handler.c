@@ -142,6 +142,9 @@ int apply_rule(char* input_string, char name_char, rule* grammer[], int depth, i
 				return 1;
 			}
 			h = h_old;
+			if(i == curr_rule->singleton_count - 1 && curr_rule->remainder_count == 0) {
+				printf("%s%c returned False (h = %d)\n", tabs, name_char, h);
+			}
 			continue;
 		}
 
@@ -151,14 +154,19 @@ int apply_rule(char* input_string, char name_char, rule* grammer[], int depth, i
 			return 1;
 		}
 
+
 		if(input_string[h] == curr_rule->singletons[i]) {
 			if (verbose) printf("| %ssingletons: %c: %d matched with input_string[h]: %c\n", tabs, curr_rule->singletons[i], pot_index, input_string[h]);
 			printf("%s%c returned True (h = %d)\n", tabs, name_char, h);
 			h++;
 			return 1;
 		}
+			
 		if (verbose) printf("| %ssingletons: %c: %d NOT matched with input_string[h]: %c\n", tabs, curr_rule->singletons[i], pot_index, input_string[h]);
 		h = h_old;
+		if(i == curr_rule->singleton_count - 1 && curr_rule->remainder_count == 0) {
+			printf("%s%c returned False (h = %d)\n", tabs, name_char, h);
+		}
 	}
 
 
@@ -186,8 +194,8 @@ int apply_rule(char* input_string, char name_char, rule* grammer[], int depth, i
 	}
 
 
-	int pot_index = uppercase_char_to_index(curr_rule->remainder[curr_rule->remainder_count - 1]);
-
+	if(curr_rule->remainder_count > 0) {
+		int pot_index = uppercase_char_to_index(curr_rule->remainder[curr_rule->remainder_count - 1]);
 		if (0 <= pot_index && pot_index <= 25) {
 			if(!apply_rule(input_string, curr_rule->remainder[curr_rule->remainder_count - 1], grammer, depth + 1, 0)) {
 				printf("%s%c returned False (h = %d)\n", tabs, name_char, h);
@@ -208,4 +216,5 @@ int apply_rule(char* input_string, char name_char, rule* grammer[], int depth, i
 		printf("%s%c returned True (h = %d)\n", tabs, name_char, h);
 		h++;
 		return 1;
+	}
 }

@@ -53,6 +53,32 @@ int setup_third_contition_grammer(rule* grammer[]) {
 	return 0;
 }
 
+int setup_513_grammer(rule* grammer[]) {
+	char* S = "E#";
+	char* E = "LI";
+	char* L = "PO";
+	char* I = "X|~";
+	char* X = "+LI";
+	char* O = "L|~";
+	char* P = "a|b|(E)";
+
+
+	for(int i = 0; i < 26; i++) {
+		free_rule(grammer[i]);
+		grammer[i] = NULL;
+	}
+	
+	grammer[uppercase_char_to_index('S')] = create_rule('S', S);
+	grammer[uppercase_char_to_index('E')] = create_rule('E', E);
+	grammer[uppercase_char_to_index('L')] = create_rule('L', L);
+	grammer[uppercase_char_to_index('I')] = create_rule('I', I);
+	grammer[uppercase_char_to_index('X')] = create_rule('X', X);
+	grammer[uppercase_char_to_index('O')] = create_rule('O', O);
+	grammer[uppercase_char_to_index('P')] = create_rule('P', P);
+
+	return 0;
+}
+
 int clean_string(char* str, int offset) {
 	char* str_off = str + offset;
 	int len = strlen(str_off);
@@ -170,6 +196,7 @@ int main(int argc, char *argv[]) {
 			switch (i) {
 				case 0: setup_initial_grammer(grammer);
 				case 1: setup_third_contition_grammer(grammer);
+				case 2: setup_513_grammer(grammer);
 			}
 			continue;
 		} else if (commandbuf[1] == 'l') {
