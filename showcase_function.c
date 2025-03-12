@@ -81,5 +81,5 @@ int apply_rule(char* input_string, char name_char, rule* grammer[]) {
 		}
 		h++;
 	}
-	return 1;
+	return 0;
 }

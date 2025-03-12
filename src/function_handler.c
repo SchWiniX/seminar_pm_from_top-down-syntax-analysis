@@ -217,4 +217,5 @@ int apply_rule(char* input_string, char name_char, rule* grammer[], int depth, i
 		h++;
 		return 1;
 	}
+	return 0;
 }

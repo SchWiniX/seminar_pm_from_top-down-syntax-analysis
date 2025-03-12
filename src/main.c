@@ -195,8 +195,11 @@ int main(int argc, char *argv[]) {
 			start_char = 'S';
 			switch (i) {
 				case 0: setup_initial_grammer(grammer);
+								break;
 				case 1: setup_third_contition_grammer(grammer);
+								break;
 				case 2: setup_513_grammer(grammer);
+								break;
 			}
 			continue;
 		} else if (commandbuf[1] == 'l') {
