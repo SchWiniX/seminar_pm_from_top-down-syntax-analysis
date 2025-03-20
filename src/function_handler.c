@@ -184,8 +184,8 @@ int apply_rule(char* input_string, char name_char, rule* grammer[], int depth, i
 
 		if(input_string[h] != curr_rule->remainder[i]) {
 			if (verbose) printf("| %sremainder: %c: %d NOT matched with input_string[h]: %c\n", tabs, curr_rule->remainder[i], pot_index, input_string[h]);
-			printf("%s%c returned False (h = %d)\n", tabs, name_char, h);
 			h = h_old;
+			printf("%s%c returned False (h = %d)\n", tabs, name_char, h);
 			return 0;
 		}
 
@@ -213,8 +213,8 @@ int apply_rule(char* input_string, char name_char, rule* grammer[], int depth, i
 			return 0;
 		}
 		if (verbose) printf("| %sremainder: %c: %d matched with input_string[h]: %c\n", tabs, curr_rule->remainder[curr_rule->remainder_count - 1], pot_index, input_string[h]);
-		printf("%s%c returned True (h = %d)\n", tabs, name_char, h);
 		h++;
+		printf("%s%c returned True (h = %d)\n", tabs, name_char, h);
 		return 1;
 	}
 	return 0;
